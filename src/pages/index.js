@@ -10,7 +10,9 @@ const bgColors = [
   'bg-five-100',
   'bg-six-100',
   'bg-seven-100',
-  'bg-eight-100'
+  'bg-eight-100',
+  'bg-nine-100',
+  'bg-ten-100'
 ]
 
 const txtColors = [
@@ -21,7 +23,9 @@ const txtColors = [
   'text-five-200',
   'text-six-200',
   'text-seven-200',
-  'text-eight-200'
+  'text-eight-200',
+  'text-nine-200',
+  'text-ten-200'
 ]
 
 const label = [
@@ -32,7 +36,9 @@ const label = [
   'Flora.',
   'Tampa.',
   'Pikaro.',
-  'Crifi.'
+  'Crifi.',
+  'Vinyl.',
+  'Foxy.'
 ]
 
 const altText = [
@@ -43,14 +49,15 @@ const altText = [
   "Flora, a tapestry of nature's beauty, where every petal tells a story of life, growth, and the timeless elegance of the botanical world.",
   "Tampa, where sun-kissed shores meet vibrant city vibes, a destination alive with energy, culture, and the warmth of Florida's Gulf Coast.",
   "Pikaro, unleash the bold spirit within. A brand that embraces daring creativity, unpredictability, and the thrill of the unexpected.",
-  "Crifi, crafting tomorrow's innovation. A fusion of creativity and technology, Crifi pioneers solutions that redefine the boundaries of what's possible."
+  "Crifi, crafting tomorrow's innovation. A fusion of creativity and technology, Crifi pioneers solutions that redefine the boundaries of what's possible.",
+  "A brand named 'Vinyl' evokes a sense of classic and timeless appeal, reminiscent of the enduring quality of vinyl records. It suggests a blend of nostalgia and modernity, catering to individuals who appreciate the rich, authentic experience associated with vinyl while embracing contemporary trends.",
+  "'Foxy' exudes a playful and vibrant personality. The brand seems to target a youthful and energetic demographic, offering products or services that are trendy, fun, and perhaps a bit unconventional."
 ]
 
 
 const IndexPage = (props) => {
-
   return (
-    <main className="bg-black">
+    <main className="bg-[#1E1E1E]">
       {props.data.photos.edges.map((img, index) => (
         <Slide image={img} text={label[index]} txtcolor={txtColors[index]} bgcolor={bgColors[index]} alt={altText[index]} />
       ))}
