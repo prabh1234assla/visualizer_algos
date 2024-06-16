@@ -1,6 +1,5 @@
 import heapq
 
-
 def prims(V, E, edges):
     adjList = [[] for _ in range(V)]
     

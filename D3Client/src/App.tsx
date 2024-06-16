@@ -42,6 +42,7 @@ function App() {
 
     if (DivRef && DivRef.current) {
 
+      DivRef.current.innerHTML = "";
       DivRef.current.appendChild(ForceGraph({ nodes, links }));
 
     }

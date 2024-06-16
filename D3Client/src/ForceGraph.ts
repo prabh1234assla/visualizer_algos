@@ -1,5 +1,11 @@
 import * as d3 from "d3";
-import { NodeInit, LinkInit } from "./vite-env";
+import { NodeInit, LinkInit, D3NodeInit } from "./types/Data";
+import LinksHighlight from "./Utils/utils";
+
+type Props = {
+    nodes: NodeInit[],
+    links: LinkInit[]
+}
 
 function ForceGraph({
     nodes, // an iterable of node objects (typically [{id}, …])
@@ -12,14 +18,14 @@ function ForceGraph({
     nodeTitle, // given d in nodes, a title string
     nodeFill = "currentColor", // node stroke fill (if not using a group color encoding)
     nodeStroke = "#a9f", // node stroke color
-    nodeStrokeWidth = 1.5, // node stroke width, in pixels
-    nodeStrokeOpacity = 2, // node stroke opacity
+    nodeStrokeWidth = 5, // node stroke width, in pixels
+    nodeStrokeOpacity = 0.5, // node stroke opacity
     nodeRadius = 5, // node radius, in pixels
     nodeStrength = d => d.index - 100,
     linkSource = ({ source }) => source, // given d in links, returns a node identifier string
     linkTarget = ({ target }) => target, // given d in links, returns a node identifier string
-    linkStroke = "#81a", // link stroke color
-    linkStrokeOpacity = 0.6, // link stroke opacity
+    linkStroke = "#c8a", // link stroke color
+    linkStrokeOpacity = 1, // link stroke opacity
     linkStrokeWidth = 2, // given d in links, returns a stroke width in pixels
     linkStrokeLinecap = "round", // link stroke linecap
     linkStrength,
@@ -46,7 +52,7 @@ function ForceGraph({
     nodes = d3.map(nodes, (_, i) => ({ id: N[i], level: Ll[i] }));
     links = d3.map(links, (_, i) => ({ source: LS[i], target: LT[i] }));
 
-    console.log(links)
+    // console.log(links)
 
     // Compute default domains.
     if (G && nodeGroups === undefined) nodeGroups = d3.sort(G);
@@ -92,6 +98,8 @@ function ForceGraph({
         .attr("r", nodeRadius)
         .call(drag(simulation))
         .attr("fill", d => d.level === 1 ? "red" : "blue")
+        .on("mouseenter", (event, d) => LinksHighlight(event, "enter", d as D3NodeInit))
+        .on("mouseleave", (event, d) => LinksHighlight(event, "leave", d as D3NodeInit))
 
     const Texts = svg.append('g')
         .selectAll('text')
@@ -192,6 +200,8 @@ function ForceGraph({
 
     function selectNode(n) {
         console.log(n)
+
+        console.log("dnkjdjksjdk")
         // const neighbors = getNeighbors(node);
 
         // nodeElements

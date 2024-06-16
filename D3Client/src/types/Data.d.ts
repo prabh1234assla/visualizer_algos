@@ -1,3 +1,13 @@
+export type D3NodeInit = {
+    id: string,
+    level: number,
+    index: number,
+    x: number,
+    y: number,
+    vy: number,
+    vx: number
+}
+
 export type NodeInit = {
     id: string,
     group: number,
@@ -6,7 +16,7 @@ export type NodeInit = {
 }
 
 export type LinkInit = {
-    target: string,
-    source: string,
+    target: D3NodeInit,
+    source: D3NodeInit,
     strength: number
 }
