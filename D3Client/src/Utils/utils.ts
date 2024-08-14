@@ -2,10 +2,10 @@ import * as d3 from "d3";
 import { D3NodeInit, LinkInit } from "../types/Data";
 
 export default function LinksHighlight(event: Event, state: "enter" | "leave", n: D3NodeInit){
-    const ColorEnter = "#121", ColorLeave = "#90a";
+    const ColorEnter = "#661F10", ColorLeave = "#E57B63";
 
     if(state == "enter"){
-        (event.target as SVGElement).setAttribute("r", "10px");
+        (event.target as SVGElement).setAttribute("r", "12px");
 
         d3
         .selectAll("line")
@@ -15,7 +15,7 @@ export default function LinksHighlight(event: Event, state: "enter" | "leave", n
     }
 
     if(state == "leave"){
-        (event.target as SVGElement).setAttribute("r", "5px");
+        (event.target as SVGElement).setAttribute("r", "6px");
 
         d3
         .selectAll("line")

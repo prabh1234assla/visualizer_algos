@@ -17,21 +17,21 @@ function ForceGraph({
     nodeGroups, // an array of ordinal values representing the node groups
     nodeTitle, // given d in nodes, a title string
     nodeFill = "currentColor", // node stroke fill (if not using a group color encoding)
-    nodeStroke = "#a9f", // node stroke color
-    nodeStrokeWidth = 5, // node stroke width, in pixels
-    nodeStrokeOpacity = 0.5, // node stroke opacity
-    nodeRadius = 5, // node radius, in pixels
+    nodeStroke = "#974634", // node stroke color
+    nodeStrokeWidth = 4, // node stroke width, in pixels
+    nodeStrokeOpacity = 0.3, // node stroke opacity
+    nodeRadius = 6, // node radius, in pixels
     nodeStrength = d => d.index - 100,
     linkSource = ({ source }) => source, // given d in links, returns a node identifier string
     linkTarget = ({ target }) => target, // given d in links, returns a node identifier string
-    linkStroke = "#c8a", // link stroke color
+    linkStroke = "#E57B63", // link stroke color
     linkStrokeOpacity = 1, // link stroke opacity
-    linkStrokeWidth = 2, // given d in links, returns a stroke width in pixels
+    linkStrokeWidth = 2.5, // given d in links, returns a stroke width in pixels
     linkStrokeLinecap = "round", // link stroke linecap
     linkStrength,
     colors = d3.schemeTableau10, // an array of color strings, for the node groups
-    width = 640, // outer width, in pixels
-    height = 400, // outer height, in pixels
+    width = '100%', // outer width, in pixels
+    height = '100%', // outer height, in pixels
     invalidation // when this promise resolves, stop the simulation
 } = {}) {
     // Compute values.
@@ -76,7 +76,8 @@ function ForceGraph({
         .attr("width", width)
         .attr("height", height)
         .attr("viewBox", [-width / 2, -height / 2, width, height])
-        .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "-200 -200 960 500")
 
     const link = svg.append("g")
         .attr("stroke", typeof linkStroke !== "function" ? linkStroke : null)
@@ -97,7 +98,7 @@ function ForceGraph({
         .join("circle")
         .attr("r", nodeRadius)
         .call(drag(simulation))
-        .attr("fill", d => d.level === 1 ? "red" : "blue")
+        .attr("fill", d => d.level === 1 ? "#D0B8A8" : "#8E402E")
         .on("mouseenter", (event, d) => LinksHighlight(event, "enter", d as D3NodeInit))
         .on("mouseleave", (event, d) => LinksHighlight(event, "leave", d as D3NodeInit))
 
@@ -105,8 +106,12 @@ function ForceGraph({
         .selectAll('text')
         .data(nodes)
         .enter().append("text")
-        .attr("dx", 12)
-        .attr("dy", ".35em")
+        .attr("dx", 10)
+        .attr("dy", 0)
+        .style("fill", "#661F10")
+        .style("font-size", "0.6em")
+        .style("font-weight", "700")
+        .style("font-family", "Monospace")
         .text(function (d) { return d.id });
 
     if (W) link.attr("stroke-width", ({ index: i }) => W[i]);

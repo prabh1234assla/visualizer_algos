@@ -44,6 +44,8 @@ function App() {
 
       DivRef.current.innerHTML = "";
       DivRef.current.appendChild(ForceGraph({ nodes, links }));
+      DivRef.current.style.width = '100vw';
+      DivRef.current.style.height = '100vh';
 
     }
 

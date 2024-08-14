@@ -1,6 +1,5 @@
 from collections import defaultdict
 
-
 class Graph():
 
         def __init__(self):
@@ -41,8 +40,8 @@ if __name__ == "__main__":
     
     visited = [False] * vertices
     
-    startNode = int(input("choose the start vertex"))
+    startNode = int(input("choose the start vertex "))
     
-    print("bfs starting from vertex " + str(startNode) + " : ")
+    print("bfs starting from vertex " + str(startNode) + " :", end=" ")
     
     g.dfs(startNode)
