@@ -20,10 +20,10 @@ def dfs_endpoint():
     print(adj_list[0])
 
     g = Graph(V, S, adj_list)
-    traversal = list(g.dfs())
-    print(traversal)
+    g.dfs()
+    iterations = g.getIterations()
     response = {
-        "traversal": traversal
+        "iterations": iterations
     }
     return jsonify(response)
     

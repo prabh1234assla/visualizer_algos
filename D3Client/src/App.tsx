@@ -1,59 +1,126 @@
 "use strict";
 
-import { useEffect, useRef } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import './App.css';
-import ForceGraph from './ForceGraph.ts';
+import ForceGraph from './components/ForceGraph.ts';
+import DfsForm from './components/forms/dfsForm.tsx';
+import { jsonProps } from './components/types/dfs';
+import { LinkInit, NodeInit } from './components/types/Data';
+
+function nodesData(id: string, startNode: string, group: number = 0) {
+
+  const level = id === startNode ? 0 : 1;
+  const label = id === startNode ? "start-node" : "not-start-node";
+
+  return {
+    id,
+    group,
+    label,
+    level
+  }
+}
+
+function linksData(target: string, source: string) {
+
+  return {
+    target: String(target),
+    source: String(source),
+    strength: 0.1
+  }
+}
+
+function animate(nodes: NodeInit[], links: LinkInit[], data: number[], startNode: string) {
+
+  nodes = nodes.map((e, i) => nodesData(e.id, startNode, data[i]));
+
+  links = links.map((e, _) => linksData(e.target as string, e.source as string));
+
+  return [nodes, links];
+
+}
+
+function buildGraph(nodeData: string, startNode: string, vertexCount: number) {
+  const graph = nodeData.trim().match(/\[\d+, \d+\]/g)?.map(item => JSON.parse(item));
+
+  const nodes = [...Array(vertexCount)]?.map((_, i) => nodesData(String(i), startNode)) as NodeInit[];
+
+  const links = graph?.map((edge, _) => linksData(edge[0], edge[1])) as LinkInit[];
+
+  return [nodes, links];
+}
 
 function App() {
+  const [startNode, setStartNode] = useState<string>('1');
+  const [nodeData, setNodeData] = useState<string>("[0, 1]");
+  const [vertexCount, setVertexCount] = useState<string>('2');
+  const [data, setData] = useState<jsonProps>({
+    iterations: [
+      [0, 0],
+      [1, 0],  // Starting from node 0, mark it as visited.
+      [1, 1]   // Move to node 1, mark it as visited.
+    ]
+  });
+  const [Nodes, setNodes] = useState<NodeInit[]>();
+  const [Links, setLinks] = useState<LinkInit[]>();
 
   const DivRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const nodes = [
-      { id: "mammal", group: 0, label: "Mammals", level: 1 },
-      { id: "dog", group: 0, label: "Dogs", level: 2 },
-      { id: "cat", group: 0, label: "Cats", level: 2 },
-      { id: "fox", group: 0, label: "Foxes", level: 2 },
-      { id: "elk", group: 0, label: "Elk", level: 2 },
-      { id: "insect", group: 1, label: "Insects", level: 1 },
-      { id: "ant", group: 1, label: "Ants", level: 2 },
-      { id: "bee", group: 1, label: "Bees", level: 2 },
-      { id: "fish", group: 2, label: "Fish", level: 1 },
-      { id: "carp", group: 2, label: "Carp", level: 2 },
-      { id: "pike", group: 2, label: "Pikes", level: 2 }
-    ];
+    // console.log('twgfgfs');
 
-    const links = [
-      { target: "mammal", source: "dog", strength: 0.7 },
-      { target: "mammal", source: "cat", strength: 0.7 },
-      { target: "mammal", source: "fox", strength: 0.7 },
-      { target: "mammal", source: "elk", strength: 0.7 },
-      { target: "insect", source: "ant", strength: 0.7 },
-      { target: "insect", source: "bee", strength: 0.7 },
-      { target: "fish", source: "carp", strength: 0.7 },
-      { target: "fish", source: "pike", strength: 0.7 },
-      { target: "cat", source: "elk", strength: 0.1 },
-      { target: "carp", source: "ant", strength: 0.1 },
-      { target: "elk", source: "bee", strength: 0.1 },
-      { target: "dog", source: "cat", strength: 0.1 },
-      { target: "fox", source: "ant", strength: 0.1 },
-      { target: "pike", source: "dog", strength: 0.1 }
-    ];
+    const [nodes, links] = buildGraph(nodeData, startNode, parseInt(vertexCount));
+    setNodes([...nodes]);
+    setLinks([...links]);
+    console.log(nodes, links);
 
-    if (DivRef && DivRef.current) {
+    // const iterations = data.iterations;
+    // let index = 0;
 
-      DivRef.current.innerHTML = "";
-      DivRef.current.appendChild(ForceGraph({ nodes, links }));
-      DivRef.current.style.width = '100vw';
-      DivRef.current.style.height = '100vh';
+    // const interval = setInterval(() => {
+    //   if (index < iterations.length) {
+    //     // console.log(iterations)
 
-    }
+    //     console.log(Nodes, Links);
 
-  }, []);
+    //     const [nodes, links] = animate(Nodes as NodeInit[], Links as LinkInit[], iterations[index], startNode);
+    //     console.log(nodes, links)
+        if (DivRef && DivRef.current) {
+          // console.log(Nodes, Links, n, l);
+          DivRef.current.innerHTML = "";
+          DivRef.current.appendChild(ForceGraph({ nodes, links }));
+          DivRef.current.style.width = '100vw';
+          DivRef.current.style.height = '100vh';
+
+        }
+
+  //       ++index;
+  //     } else {
+  //       clearInterval(interval);
+  //     }
+  //   })
+
+
+  }, [])
+
+  // useEffect(() => {
+  //   // alert('wtf');
+
+  //   const iterations = data.iterations;
+
+  //   console.log(iterations)
+
+  //   iterations.map((e, _) => animate(Nodes as NodeInit[], Links as LinkInit[], e, startNode));
+
+  //   console.log(Nodes, Links);
+
+  // }, []);
 
   return (
     <>
-      <div ref={DivRef}></div>
+      <main>
+        <div ref={DivRef}></div>
+        <DfsForm startNode={startNode} setStartNode={setStartNode} nodeData={nodeData} setNodeData={setNodeData} vertexCount={vertexCount} setVertexCount={setVertexCount} setData={setData} />
+      </main>
     </>
   )
 }
