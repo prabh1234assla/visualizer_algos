@@ -1,11 +1,11 @@
 "use strict";
 
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './App.css';
-import ForceGraph from './components/ForceGraph.ts';
 import DfsForm from './components/forms/dfsForm.tsx';
 import { jsonProps } from './components/types/dfs';
 import { LinkInit, NodeInit } from './components/types/Data';
+import ForceGraph from './components/ForceGraph.tsx';
 
 function nodesData(id: string, startNode: string, group: number = 0) {
 
@@ -53,6 +53,7 @@ function App() {
   const [startNode, setStartNode] = useState<string>('1');
   const [nodeData, setNodeData] = useState<string>("[0, 1]");
   const [vertexCount, setVertexCount] = useState<string>('2');
+  const [strength, setStrength] = useState<string>('0.1');
   const [data, setData] = useState<jsonProps>({
     iterations: [
       [0, 0],
@@ -60,66 +61,53 @@ function App() {
       [1, 1]   // Move to node 1, mark it as visited.
     ]
   });
-  const [Nodes, setNodes] = useState<NodeInit[]>();
-  const [Links, setLinks] = useState<LinkInit[]>();
-
-  const DivRef = useRef<HTMLDivElement>(null);
+  const [Nodes, setNodes] = useState<NodeInit[]>([
+    { id: '0', group: 0, label: 'start-node', level: 0 },
+    { id: '1', group: 0, label: 'not-start-node', level: 1 }
+  ]
+  );
+  const [Links, setLinks] = useState<LinkInit[]>([
+    { target: '0', source: '1', strength: 0.1 }
+  ]
+  );
 
   useEffect(() => {
-    // console.log('twgfgfs');
 
-    const [nodes, links] = buildGraph(nodeData, startNode, parseInt(vertexCount));
+    let [nodes, links] = buildGraph(nodeData, startNode, parseInt(vertexCount));
+    nodes = nodes as NodeInit[];
+    links = links as LinkInit[];
     setNodes([...nodes]);
     setLinks([...links]);
-    console.log(nodes, links);
 
-    // const iterations = data.iterations;
-    // let index = 0;
+    const iterations = data.iterations;
+    let index = 0;
 
-    // const interval = setInterval(() => {
-    //   if (index < iterations.length) {
-    //     // console.log(iterations)
+    const interval = setInterval(() => {
+      if (index < iterations.length) {
 
-    //     console.log(Nodes, Links);
+        let [nodes, links] = animate(Nodes as NodeInit[], Links as LinkInit[], iterations[index], startNode);
+        nodes = nodes as NodeInit[];
+        links = links as LinkInit[];
+        setNodes([...nodes]);
+        setLinks([...links]);
 
-    //     const [nodes, links] = animate(Nodes as NodeInit[], Links as LinkInit[], iterations[index], startNode);
-    //     console.log(nodes, links)
-        if (DivRef && DivRef.current) {
-          // console.log(Nodes, Links, n, l);
-          DivRef.current.innerHTML = "";
-          DivRef.current.appendChild(ForceGraph({ nodes, links }));
-          DivRef.current.style.width = '100vw';
-          DivRef.current.style.height = '100vh';
+        console.log(nodes)
 
-        }
+        ++index;
+      } else {
+        alert('Iterations Executed Successfully!!!');
+        clearInterval(interval);
+      }
+    }, 2000);
 
-  //       ++index;
-  //     } else {
-  //       clearInterval(interval);
-  //     }
-  //   })
-
-
-  }, [])
-
-  // useEffect(() => {
-  //   // alert('wtf');
-
-  //   const iterations = data.iterations;
-
-  //   console.log(iterations)
-
-  //   iterations.map((e, _) => animate(Nodes as NodeInit[], Links as LinkInit[], e, startNode));
-
-  //   console.log(Nodes, Links);
-
-  // }, []);
+    return () => clearInterval(interval);
+  }, [startNode, nodeData, vertexCount, data, strength]);
 
   return (
     <>
       <main>
-        <div ref={DivRef}></div>
-        <DfsForm startNode={startNode} setStartNode={setStartNode} nodeData={nodeData} setNodeData={setNodeData} vertexCount={vertexCount} setVertexCount={setVertexCount} setData={setData} />
+        <ForceGraph nodes={Nodes} links={Links} strength={+strength} />
+        <DfsForm setStartNode={setStartNode} setNodeData={setNodeData} setVertexCount={setVertexCount} setData={setData} setStrength={setStrength} />
       </main>
     </>
   )

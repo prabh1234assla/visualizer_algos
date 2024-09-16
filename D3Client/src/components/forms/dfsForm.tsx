@@ -8,33 +8,34 @@ type Props = {
     setStartNode: React.Dispatch<React.SetStateAction<string>>,
     setNodeData: React.Dispatch<React.SetStateAction<string>>,
     setVertexCount: React.Dispatch<React.SetStateAction<string>>,
-    setData: React.Dispatch<React.SetStateAction<jsonProps>>
+    setData: React.Dispatch<React.SetStateAction<jsonProps>>,
+    setStrength: React.Dispatch<React.SetStateAction<string>>
 }
 
-const DfsForm: FC<Props> = ({ setStartNode, setNodeData, setVertexCount, setData }) => {
+const DfsForm: FC<Props> = ({ setStartNode, setNodeData, setVertexCount, setData, setStrength }) => {
     const graphDataRef = useRef<HTMLTextAreaElement>(null);
     const startNodeRef = useRef<HTMLInputElement>(null);
     const vertexRef = useRef<HTMLInputElement>(null);
-    const [lstartNode, setLStartNode] = useState<string>('19');
-    const [lnodeData, setLNodeData] = useState<string>("[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6], [3, 7], [4, 7], [5, 8], [6, 9], [7, 10], [8, 11], [9, 12], [10, 13], [11, 14], [12, 15], [13, 16], [14, 17], [15, 18], [16, 19]");
-    const [lvertexCount, setLVertexCount] = useState<string>('20');
+    const strengthRef = useRef<HTMLInputElement>(null);
+
+    const [lstartNode, setLStartNode] = useState<string>('1');
+    const [lnodeData, setLNodeData] = useState<string>("[0, 1]");
+    const [lvertexCount, setLVertexCount] = useState<string>('2');
+    const [lstrength, setLStrength] = useState<string>('0');
 
     async function submitForm(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.preventDefault();
 
         try {
-            const graph = lnodeData.trim().match(/\[\d+, \d+\]/g)?.map(item => JSON.parse(item));
-
             // Prepare the JSON object
             const inputJson = {
                 startNode: lstartNode,
                 vertexCount: lvertexCount,
-                graph
+                graph: lnodeData.trim().match(/\[\d+, \d+\]/g)?.map(item => JSON.parse(item))
             };
 
             // Send the JSON to the Flask endpoint
             try {
-
                 const response = await fetch('http://127.0.0.1:8080/dfs', {
                     method: 'POST',
                     headers: {
@@ -50,8 +51,10 @@ const DfsForm: FC<Props> = ({ setStartNode, setNodeData, setVertexCount, setData
                 setStartNode(lstartNode);
                 setNodeData(lnodeData);
                 setVertexCount(lvertexCount);
+                setStrength(lstrength);
 
                 const data = await response.json() as jsonProps;
+                console.log(data);
                 setData(data);
 
             } catch (error: any) {
@@ -83,6 +86,12 @@ const DfsForm: FC<Props> = ({ setStartNode, setNodeData, setVertexCount, setData
             <label htmlFor="graph">Graph (as adjacency list):
                 <br />
                 <textarea ref={graphDataRef} id="graph" name="graph" rows={6} value={lnodeData} onInput={e => setLNodeData(e.currentTarget.value)} required></textarea>
+            </label>
+            <br />
+
+            <label htmlFor="strength">Strength (current {lstrength}):
+                <br />
+                <input ref={strengthRef} type="range" id="strength" name="strength" min="-500" max="500" step="10" value={lstrength} onChange={e => setLStrength(e.currentTarget.value)} required />
             </label>
             <br />
 
